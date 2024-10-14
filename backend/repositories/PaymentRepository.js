@@ -2,9 +2,9 @@
 const Payment = require('../models/Payment');
 
 // Create a payment record
-const createPayment = async (appointmentId) => {
+const createPayment = async (appointmentId, userId) => {
     try {
-        const payment = new Payment({ appointmentId });
+        const payment = new Payment({ appointmentId, userId }); // Add userId here
         return await payment.save();
     } catch (error) {
         throw error;

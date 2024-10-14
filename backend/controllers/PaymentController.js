@@ -3,10 +3,10 @@ const PaymentRepository = require('../repositories/PaymentRepository');
 
 // Create a payment for an appointment
 const createPayment = async (req, res) => {
-    const { appointmentId } = req.body;
+    const { appointmentId, userId } = req.body; // Get userId from request body
 
     try {
-        const newPayment = await PaymentRepository.createPayment(appointmentId);
+        const newPayment = await PaymentRepository.createPayment(appointmentId, userId); // Pass userId to the repository
         return res.status(201).json({ message: 'Payment created successfully', payment: newPayment });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
