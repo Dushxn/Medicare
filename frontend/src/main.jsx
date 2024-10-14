@@ -15,6 +15,9 @@ import PaymentHistory from './Components/Payment/paymentHistory.jsx'
 import AdminProfile from './Components/Profile/AdminProfile.jsx'
 import AppointmentControl from './Components/Appointments/Admin/AppointmentControl.jsx'
 import AdminMedicalRecord from './Components/MedicalRecord/Admin/AdminViewMedical.jsx'
+import StaffSchedule from './Components/StaffSchedule/StaffSchedule.jsx'
+import DataAndReports from './Components/report/ReportDashboard.jsx'
+import ViewMedical from './Components/MedicalRecord/ViewMedical.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -33,6 +36,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/adminProfile" element={<AdminProfile/>} /> 
         <Route path="/adminAppointment" element={<AppointmentControl/>} />
         <Route path="/adminMedical" element={<AdminMedicalRecord/>} />
+        <Route path="/staffschedule" element={<StaffSchedule/>} />
+        <Route path="/reportdashboard" element={<DataAndReports/>} />
+        <Route path='/patientmedical' element={<ViewMedical/>} />
       </Routes>
     </Router>
     </Provider>

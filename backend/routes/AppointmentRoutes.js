@@ -1,6 +1,6 @@
 // routes/AppointmentRoutes.js
 const express = require('express');
-const { createAppointment, rescheduleAppointment, deleteAppointment, getAllAppointments } = require('../controllers/AppointmentController');
+const { createAppointment, rescheduleAppointment, deleteAppointment, getAllAppointments, getAppointmentsByTimeSlot } = require('../controllers/AppointmentController');
 const router = express.Router();
 
 // Route to create a new appointment
@@ -14,5 +14,8 @@ router.delete('/delete', deleteAppointment);
 
 // Route to get all appointments
 router.get('/all', getAllAppointments);
+
+// Route to get appointments grouped by timeSlot
+router.get('/time-slot-analysis', getAppointmentsByTimeSlot);
 
 module.exports = router;

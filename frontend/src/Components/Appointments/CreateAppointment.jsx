@@ -31,6 +31,9 @@ const CreateAppointment = () => {
       [name]: value
     }));
   };
+  const handleNavigation = (path) => {
+    navigate(path); // Function to navigate to the specified path
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,6 +64,7 @@ const CreateAppointment = () => {
         type: 'error'
       });
     }
+    
   };
 
   return (
@@ -146,8 +150,18 @@ const CreateAppointment = () => {
         <div className="mt-10 lg:mt-0 lg:ml-20">
           <h2 className="text-gray-500 mb-4">Manage Appointments</h2>
           <div className="flex flex-col space-y-4">
-            <button className="w-full lg:w-60 bg-blue-500 text-white py-2 rounded">Ongoing Appointments</button>
-            <button className="w-full lg:w-60 bg-blue-500 text-white py-2 rounded">Appointment History</button>
+          <button 
+              onClick={() => handleNavigation('/allAppointments')} 
+              className="w-full lg:w-60 bg-blue-500 text-white py-2 rounded"
+            >
+              Ongoing Appointments
+            </button>
+            <button 
+              onClick={() => handleNavigation('/allAppointments')} 
+              className="w-full lg:w-60 bg-blue-500 text-white py-2 rounded"
+            >
+              Appointment History
+            </button>
           </div>
         </div>
       </div>

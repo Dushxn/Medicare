@@ -60,9 +60,20 @@ const getAllAppointments = async (req, res) => {
     }
 };
 
+// Get appointments grouped by timeSlot
+const getAppointmentsByTimeSlot = async (req, res) => {
+    try {
+        const appointments = await AppointmentRepository.getAppointmentsGroupedByTimeSlot();
+        return res.status(200).json(appointments);
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 module.exports = {
     createAppointment,
     rescheduleAppointment,
     deleteAppointment,
-    getAllAppointments
+    getAllAppointments,
+    getAppointmentsByTimeSlot
 };

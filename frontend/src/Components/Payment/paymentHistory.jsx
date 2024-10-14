@@ -10,8 +10,11 @@ const PaymentHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Get the user ID from Redux
-  const userId = useSelector((state) => state.user.userId); // Adjust according to your state structure
+  // Get the userInfo from Redux
+  const userInfo = useSelector((state) => state.user.userInfo); // Accessing userInfo
+  console.log(userInfo);
+  const userId = userInfo?._id; // Accessing userId from userInfo
+  console.log(userId);
 
   useEffect(() => {
     const fetchPaymentHistory = async () => {
@@ -26,7 +29,10 @@ const PaymentHistory = () => {
       }
     };
 
-    fetchPaymentHistory();
+    // Only fetch payment history if userId is available
+    if (userId) {
+      fetchPaymentHistory();
+    }
   }, [userId]);
 
   if (loading) return <div>Loading...</div>;

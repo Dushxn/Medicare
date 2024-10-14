@@ -41,11 +41,26 @@ const getAllAppointments = async () => {
         throw error;
     }
 };
+const getAppointmentsGroupedByTimeSlot = async () => {
+    try {
+        return await Appointment.aggregate([
+            {
+                $group: {
+                    _id: '$timeSlot', // Group by timeSlot
+                    count: { $sum: 1 }, // Count the number of appointments for each timeSlot
+                }
+            }
+        ]);
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     createAppointment,
     getAppointmentById,
     updateAppointmentById,
     deleteAppointmentById,
-    getAllAppointments
+    getAllAppointments,
+    getAppointmentsGroupedByTimeSlot
 };

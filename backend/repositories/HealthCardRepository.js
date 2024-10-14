@@ -10,6 +10,15 @@ const createHealthCard = async (data) => {
     }
 };
 
+const getHealthCardByEmail = async (email) => {
+    try {
+        return await HealthCard.findOne({ email });
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createHealthCard,
+    getHealthCardByEmail,
 };

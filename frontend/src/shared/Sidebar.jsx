@@ -59,7 +59,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link 
-              to="/medical-records" 
+              to="/patientmedical" 
               className="block px-4 py-2 rounded hover:bg-blue-600 hover:text-white"
               onClick={() => setIsOpen(false)}
             >
