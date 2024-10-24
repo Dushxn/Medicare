@@ -1,4 +1,3 @@
-// src/Components/AdminProfile/AdminProfile.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { QrCode } from 'lucide-react';
@@ -12,17 +11,51 @@ const AdminProfile = () => {
   const [email, setEmail] = useState('');
   const [nic, setNic] = useState('');
   const [gender, setGender] = useState('');
-  const [contactNo, setContactNo] = useState(''); // Added contactNo state
+  const [contactNo, setContactNo] = useState('');
   const [birthday, setBirthday] = useState('');
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [alertMessage, setAlertMessage] = useState(null); // State for alert messages
-  const [alertType, setAlertType] = useState('success'); // State for alert type
-  const [showAlert, setShowAlert] = useState(false); // State to control alert visibility
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertType, setAlertType] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
 
-  // Function to register patients
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Validation for NIC, contact number, name, and gender
+    const nicRegex = /^[0-9]{9}[Vv]?$/; // Example for NIC format (9 digits and optional 'V'/'v')
+    const contactNoRegex = /^[0-9]{10}$/; // Contact number must be 10 digits
+    const nameRegex = /^[A-Za-z]+$/; // Only letters allowed for name
+    const genderOptions = ['Male', 'Female', 'Other']; // Gender options
+
+    if (!nicRegex.test(nic)) {
+      setAlertMessage('Invalid NIC. It should be 9 digits followed by an optional "V" or "v".');
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
+    if (!contactNoRegex.test(contactNo)) {
+      setAlertMessage('Invalid Contact No. It should be 10 digits.');
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
+    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+      setAlertMessage('Names can only contain letters.');
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
+    if (!genderOptions.includes(gender)) {
+      setAlertMessage('Invalid gender. Please select "Male", "Female", or "Other".');
+      setAlertType('error');
+      setShowAlert(true);
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:5000/api/health-cards/register', {
         firstName,
@@ -32,11 +65,10 @@ const AdminProfile = () => {
         gender,
         contactNo,
       });
-      setAlertMessage(response.data.message); // Set success message from response
-      setAlertType('success'); // Set alert type to success
-      setShowAlert(true); // Show the alert
+      setAlertMessage(response.data.message);
+      setAlertType('success');
+      setShowAlert(true);
 
-      // Reset form fields after successful registration
       setFirstName('');
       setLastName('');
       setEmail('');
@@ -44,34 +76,28 @@ const AdminProfile = () => {
       setGender('');
       setContactNo('');
     } catch (err) {
-      setAlertMessage(err.message); // Set error message if any
-      setAlertType('error'); // Set alert type to error
-      setShowAlert(true); // Show the alert
+      setAlertMessage(err.message);
+      setAlertType('error');
+      setShowAlert(true);
     }
   };
 
-  // Fetch appointments
   const fetchAppointments = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/appointments/all');
-      console.log(response.data); // Log the entire response
-
-      // Check if appointments exist in the response
       if (!response.data.appointments) {
         throw new Error("No appointments found in the response");
       }
 
-      // Filter appointments based on status
       const filteredAppointments = response.data.appointments.filter((appointment) => {
-        return appointment.status === 'Pending'; // Check if the appointment is pending
+        return appointment.status === 'Pending';
       });
 
-      console.log(filteredAppointments); // Log filtered appointments
-      setAppointments(filteredAppointments); // Set state with filtered appointments
+      setAppointments(filteredAppointments);
     } catch (err) {
-      setAlertMessage(err.message); // Set error message if any
-      setAlertType('error'); // Set alert type to error
-      setShowAlert(true); // Show the alert
+      setAlertMessage(err.message);
+      setAlertType('error');
+      setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -82,8 +108,8 @@ const AdminProfile = () => {
   }, []);
 
   const handleCloseAlert = () => {
-    setShowAlert(false); // Hide alert on close
-    setAlertMessage(null); // Reset alert message
+    setShowAlert(false);
+    setAlertMessage(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -153,7 +179,7 @@ const AdminProfile = () => {
                   type="text" 
                   placeholder="Contact No" 
                   value={contactNo} 
-                  onChange={(e) => setContactNo(e.target.value)} // Added onChange for contactNo
+                  onChange={(e) => setContactNo(e.target.value)} 
                   className="w-1/2 p-2 border rounded" 
                   required 
                 />

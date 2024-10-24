@@ -6,6 +6,7 @@ class Database {
     this._connect();
   }
 
+  //connect to mongoDB
   _connect() {
     if (!Database.instance) {
       mongoose.connect(process.env.MONGO_URI, {

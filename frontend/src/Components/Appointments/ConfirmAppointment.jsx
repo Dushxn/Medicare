@@ -31,7 +31,7 @@ const ConfirmAppointment = () => {
       });
 
       // Optionally, redirect after success
-      navigate('/payment-history');
+      navigate('/paymentHistory');
 
     } catch (error) {
       console.error('Error creating payment:', error);

@@ -5,28 +5,34 @@ import axios from 'axios';
 const StaffSchedule = () => {
   // State to store fetched schedules
   const [staffSchedules, setStaffSchedules] = useState([]);
-
+  
   // State to store form inputs for adding a new schedule
   const [formData, setFormData] = useState({
     staffID: '',
     staffName: '',
     shift: '',
     department: '',
-    position: '', // Add position to the form data state
+    position: '',
   });
+
+  // State to store whether we're editing a schedule
+  const [isEditing, setIsEditing] = useState(false);
+
+  // State to store the current schedule being edited
+  const [editScheduleId, setEditScheduleId] = useState(null);
 
   // Fetch the data from the backend
   useEffect(() => {
     const fetchStaffSchedules = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/staff-schedules/all'); // Replace with your actual backend URL
-        setStaffSchedules(response.data.schedules); // Set the fetched data
+        const response = await axios.get('http://localhost:5000/api/staff-schedules/all');
+        setStaffSchedules(response.data.schedules);
       } catch (error) {
         console.error('Error fetching staff schedules:', error);
       }
     };
 
-    fetchStaffSchedules(); // Call the function to fetch data on component mount
+    fetchStaffSchedules();
   }, []);
 
   // Handle form input changes
@@ -37,27 +43,59 @@ const StaffSchedule = () => {
     });
   };
 
-  // Handle form submission to add a new schedule
+  // Handle form submission to add or update a schedule
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/staff-schedules/create', formData); // Replace with your actual backend URL
-      console.log('New schedule added:', response.data);
-      
-      // Add the new schedule to the list without refetching
-      setStaffSchedules([...staffSchedules, response.data.schedule]);
-      
+      if (isEditing) {
+        // Update existing schedule
+        const response = await axios.put(`http://localhost:5000/api/staff-schedules/update/${editScheduleId}`, formData);
+        console.log('Schedule updated:', response.data);
+
+        // Update the state with the updated schedule
+        const updatedSchedules = staffSchedules.map(schedule => 
+          schedule._id === editScheduleId ? response.data.schedule : schedule
+        );
+        setStaffSchedules(updatedSchedules);
+
+        // Reset editing state
+        setIsEditing(false);
+        setEditScheduleId(null);
+      } else {
+        // Create new schedule
+        const response = await axios.post('http://localhost:5000/api/staff-schedules/create', formData);
+        console.log('New schedule added:', response.data);
+        
+        // Add the new schedule to the list
+        setStaffSchedules([...staffSchedules, response.data.schedule]);
+      }
+
       // Clear the form
       setFormData({
         staffID: '',
         staffName: '',
         shift: '',
         department: '',
-        position: '', // Clear position after submission
+        position: '',
       });
     } catch (error) {
-      console.error('Error adding new staff schedule:', error);
+      console.error('Error adding/updating staff schedule:', error);
     }
+  };
+
+  // Handle editing a schedule
+  const handleEdit = (schedule) => {
+    setIsEditing(true);
+    setEditScheduleId(schedule._id);
+
+    // Pre-fill the form with the existing schedule data
+    setFormData({
+      staffID: schedule.staffID,
+      staffName: schedule.staffName,
+      shift: schedule.shift,
+      department: schedule.department,
+      position: schedule.position,
+    });
   };
 
   return (
@@ -91,10 +129,15 @@ const StaffSchedule = () => {
                     <td className="py-4 px-6 text-start">{staff.staffID}</td>
                     <td className="py-4 px-6 text-start">{staff.staffName}</td>
                     <td className="py-4 px-6 text-start">{staff.shift}</td>
-                    <td className="py-4 px-6 text-start">{staff.position}</td> {/* Display position */}
+                    <td className="py-4 px-6 text-start">{staff.position}</td>
                     <td className="py-4 px-6 text-start">{staff.department}</td>
                     <td className="py-4 px-6 text-start">
-                      <button className="text-blue-500 hover:underline">Update</button>
+                      <button
+                        className="text-blue-500 hover:underline"
+                        onClick={() => handleEdit(staff)}
+                      >
+                        Update
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -110,7 +153,7 @@ const StaffSchedule = () => {
         </div>
 
         <div className="mt-8">
-          <h3 className="text-lg font-medium text-gray-600">Add new schedule</h3>
+          <h3 className="text-lg font-medium text-gray-600">{isEditing ? 'Update Schedule' : 'Add New Schedule'}</h3>
 
           <form className="mt-4 flex space-x-4" onSubmit={handleSubmit}>
             <input
@@ -162,7 +205,7 @@ const StaffSchedule = () => {
               type="submit"
               className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
             >
-              Notify Staff
+              {isEditing ? 'Update Staff' : 'Add Staff'}
             </button>
           </form>
         </div>

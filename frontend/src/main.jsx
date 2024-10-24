@@ -18,6 +18,7 @@ import AdminMedicalRecord from './Components/MedicalRecord/Admin/AdminViewMedica
 import StaffSchedule from './Components/StaffSchedule/StaffSchedule.jsx'
 import DataAndReports from './Components/report/ReportDashboard.jsx'
 import ViewMedical from './Components/MedicalRecord/ViewMedical.jsx'
+import AddMedicalRecordPage from './Components/MedicalRecord/Admin/AddMedical.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -39,6 +40,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/staffschedule" element={<StaffSchedule/>} />
         <Route path="/reportdashboard" element={<DataAndReports/>} />
         <Route path='/patientmedical' element={<ViewMedical/>} />
+        <Route path="/createMedical" element={<AddMedicalRecordPage/>} />
       </Routes>
     </Router>
     </Provider>

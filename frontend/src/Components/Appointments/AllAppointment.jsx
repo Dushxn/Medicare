@@ -33,13 +33,12 @@ const AllAppointment = () => {
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.email === loggedInUserEmail
   );
-
-  // Filter by ongoing and history
-  const filteredByStatus = filteredAppointments.filter((appointment) => {
-    if (filter === 'ongoing') return appointment.status !== 'pending';
-    if (filter === 'history') return appointment.status === 'pending';
-    return true;
-  });
+// Filter by ongoing and history
+const filteredByStatus = filteredAppointments.filter((appointment) => {
+  if (filter === 'ongoing') return appointment.status !== 'completed'; // Only appointments not completed
+  if (filter === 'history') return appointment.status === 'completed'; // Only completed appointments
+  return true; // For 'all' filter, return everything
+});
 
   if (loading) return <p>Loading appointments...</p>;
   if (error) return <p>Error: {error}</p>;

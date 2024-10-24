@@ -28,10 +28,14 @@ const ViewMedical = () => {
   }, []);
 
   // Search functionality
-  const handleSearch = () => {
-    if (searchTerm) {
+  const handleSearch = (term) => {
+    setSearchTerm(term); // Update search term state
+
+    if (term) {
       const filtered = medicalRecords.filter((record) =>
-        record.patientName.toLowerCase().includes(searchTerm.toLowerCase())
+        record.patientName.toLowerCase().includes(term.toLowerCase()) ||
+        record.patientID.toString().includes(term) || // Include search by patient ID
+        record.symptoms.toLowerCase().includes(term.toLowerCase()) // Include search by symptoms
       );
       setFilteredRecords(filtered);
     } else {
@@ -61,17 +65,11 @@ const ViewMedical = () => {
                 type="text"
                 placeholder="Search Medical Records"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
+                onChange={(e) => handleSearch(e.target.value)} // Update search term state and filter records
                 className="w-full py-2 pl-4 pr-10 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
             </div>
-            <button
-              onClick={handleSearch} // Call search function
-              className="ml-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition"
-            >
-              Search
-            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">

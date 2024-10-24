@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import AdminSideSideBar from '../../../shared/AdminSideBar';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 const AdminMedicalRecord = () => {
   const [medicalRecords, setMedicalRecords] = useState([]); // State to hold fetched medical records
@@ -45,9 +46,11 @@ const AdminMedicalRecord = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-700">Medical Records</h2>
+            <Link to="/createMedical">
             <button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
               Add Record
             </button>
+            </Link>
           </div>
           <div className="flex mb-6">
             <div className="relative flex-1">

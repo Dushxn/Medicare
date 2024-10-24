@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Sidebar from '../../shared/Sidebar';
-import CustomAlert from '../../Components/Alert/CustomAlert'; // Import the custom alert
+import CustomAlert from '../../Components/Alert/CustomAlert';
 import { useNavigate } from 'react-router-dom';
 
 const CreateAppointment = () => {
@@ -23,21 +23,72 @@ const CreateAppointment = () => {
   });
 
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+  const [phoneError, setPhoneError] = useState('');
+
+  useEffect(() => {
+    // Set the minimum date to today when the component mounts
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date-input').min = today;
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+    if (name === 'contactNo') {
+      // Remove any non-digit characters
+      const sanitizedValue = value.replace(/\D/g, '');
+      // Limit to 10 digits
+      const trimmedValue = sanitizedValue.slice(0, 10);
+      setFormData({ ...formData, [name]: trimmedValue });
+      // Validate phone number
+      if (trimmedValue.length === 10) {
+        setPhoneError('');
+      } else if (trimmedValue.length > 0) {
+        setPhoneError('Please enter a 10-digit phone number');
+      } else {
+        setPhoneError('');
+      }
+    } else if (name === 'date') {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setAlert({
+          show: true,
+          message: 'Please select today or a future date.',
+          type: 'error'
+        });
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value
+        }));
+        setAlert({ show: false });
+      }
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value
+      }));
+    }
   };
+
   const handleNavigation = (path) => {
-    navigate(path); // Function to navigate to the specified path
+    navigate(path);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (formData.contactNo.length !== 10) {
+      setAlert({
+        show: true,
+        message: 'Please enter a valid 10-digit phone number.',
+        type: 'error'
+      });
+      return;
+    }
+
     const appointmentData = {
       patientName: formData.patientName,
       email: formData.email,
@@ -48,14 +99,11 @@ const CreateAppointment = () => {
       timeSlot: formData.timeSlot,
       location: formData.location
     };
-  
+
     try {
       const response = await axios.post('http://localhost:5000/api/appointments/create', appointmentData);
       console.log('Appointment created successfully:', response.data);
-  
-      // Redirect to ConfirmAppointment page with appointment data
       navigate('/confirm-appointment', { state: { appointment: response.data } });
-  
     } catch (error) {
       console.error('Error creating appointment:', error);
       setAlert({
@@ -64,7 +112,6 @@ const CreateAppointment = () => {
         type: 'error'
       });
     }
-    
   };
 
   return (
@@ -83,14 +130,17 @@ const CreateAppointment = () => {
 
           <form onSubmit={handleSubmit} className="w-full">
             <div className="space-y-4">
-              <input
-                type="text"
-                name="contactNo"
-                placeholder="Enter Contact Number"
-                className="w-full lg:w-96 p-2 border-transparent rounded bg-secondaryGray text-primaryGray"
-                value={formData.contactNo}
-                onChange={handleInputChange}
-              />
+              <div>
+                <input
+                  type="text"
+                  name="contactNo"
+                  placeholder="Enter Contact Number"
+                  className="w-full lg:w-96 p-2 border-transparent rounded bg-secondaryGray text-primaryGray"
+                  value={formData.contactNo}
+                  onChange={handleInputChange}
+                />
+                {phoneError && <p className="text-red-500 mt-1 text-sm">{phoneError}</p>}
+              </div>
               <select
                 name="specialization"
                 className="w-full lg:w-96 p-2 border-transparent rounded bg-secondaryGray text-primaryGray"
@@ -113,20 +163,24 @@ const CreateAppointment = () => {
               </select>
               <input
                 type="date"
+                id="date-input"
                 name="date"
                 className="w-full lg:w-96 p-2 border-transparent rounded bg-secondaryGray text-primaryGray"
                 value={formData.date}
                 onChange={handleInputChange}
               />
-              <select
+             <select
                 name="timeSlot"
                 className="w-full lg:w-96 p-2 border-transparent rounded bg-secondaryGray text-primaryGray"
                 value={formData.timeSlot}
                 onChange={handleInputChange}
               >
                 <option value="" disabled>Select Time Slot</option>
-                <option value="9am-10am">9:00 AM - 10:00 AM</option>
-                <option value="11am-12pm">11:00 AM - 12:00 PM</option>
+                <option value="8:00-10:00AM">8:00 - 10:00 AM</option>
+                <option value="10:00-11:00AM">10:00 - 11:00 AM</option>
+                <option value="12:00-14:00PM">12:00 - 14:00 PM</option>
+                <option value="14:00-16:00PM">14:00 - 16:00 PM</option>
+                <option value="16:00-18:00PM">16:00 - 18:00 PM</option>
               </select>
               <select
                 name="location"
@@ -150,7 +204,7 @@ const CreateAppointment = () => {
         <div className="mt-10 lg:mt-0 lg:ml-20">
           <h2 className="text-gray-500 mb-4">Manage Appointments</h2>
           <div className="flex flex-col space-y-4">
-          <button 
+            <button 
               onClick={() => handleNavigation('/allAppointments')} 
               className="w-full lg:w-60 bg-blue-500 text-white py-2 rounded"
             >
@@ -166,7 +220,6 @@ const CreateAppointment = () => {
         </div>
       </div>
 
-      {/* Display custom alert if needed */}
       {alert.show && (
         <CustomAlert message={alert.message} type={alert.type} onClose={() => setAlert({ show: false })} />
       )}
