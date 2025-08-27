@@ -7,9 +7,8 @@
     "test": "jest"
   },
   "jest": {
-  "testEnvironment": "node"
-}
-,
+    "testEnvironment": "node"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,10 +21,12 @@
     "express": "^4.21.1",
     "form-data": "^4.0.1",
     "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.10.0",
     "mongoose": "^8.7.1",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

@@ -1,107 +1,138 @@
-import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
-import AdminSideSideBar from '../../../shared/AdminSideBar';
-import axios from 'axios';
-import {Link} from 'react-router-dom';
+"use client"
+
+import { useEffect, useState } from "react"
+import { Search, FileText, Plus } from "lucide-react"
+import axios from "axios"
+import { Link } from "react-router-dom"
 
 const AdminMedicalRecord = () => {
-  const [medicalRecords, setMedicalRecords] = useState([]); // State to hold fetched medical records
-  const [searchTerm, setSearchTerm] = useState(''); // State to hold search input
-  const [filteredRecords, setFilteredRecords] = useState([]); // State for filtered records
+  const [medicalRecords, setMedicalRecords] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredRecords, setFilteredRecords] = useState([])
 
-  // Fetch medical records from the database
   const fetchMedicalRecords = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/medical-records/all'); // Adjust the URL if needed
-      setMedicalRecords(response.data.records);
-      setFilteredRecords(response.data.records); // Initialize filtered records
+      const response = await axios.get("http://localhost:5000/api/medical-records/all")
+      setMedicalRecords(response.data.records)
+      setFilteredRecords(response.data.records)
     } catch (error) {
-      console.error('Error fetching medical records:', error);
+      console.error("Error fetching medical records:", error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchMedicalRecords();
-  }, []);
+    fetchMedicalRecords()
+  }, [])
 
-  // Search functionality
   const handleSearch = () => {
     if (searchTerm) {
       const filtered = medicalRecords.filter((record) =>
-        record.patientName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredRecords(filtered);
+        record.patientName.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+      setFilteredRecords(filtered)
     } else {
-      setFilteredRecords(medicalRecords); // Reset to all records if search term is empty
+      setFilteredRecords(medicalRecords)
     }
-  };
+  }
 
   return (
-    <div className="flex h-screen">
-      <AdminSideSideBar />
-      <div className="flex-1 p-10 pl-20">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className='text-[40px] font-bold'>Medi<span className='text-blue-500'>Care</span></h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 shadow-lg">
+        <div className="flex items-center gap-3">
+          <FileText className="h-8 w-8" />
+          <div>
+            <h1 className="text-3xl font-bold">
+              Medi<span className="text-blue-200">Care</span>
+            </h1>
+            <p className="text-blue-100 mt-1">Medical Records Management</p>
+          </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-700">Medical Records</h2>
-            <Link to="/createMedical">
-            <button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-              Add Record
-            </button>
-            </Link>
-          </div>
-          <div className="flex mb-6">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Search Medical Records"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
-                className="w-full py-2 pl-4 pr-10 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
+      </div>
+
+      <div className="p-6">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+                <FileText className="h-6 w-6 text-blue-600" />
+                Medical Records
+              </h2>
+              <Link to="/createMedical">
+                <button className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                  <Plus className="h-4 w-4" />
+                  Add Record
+                </button>
+              </Link>
             </div>
-            <button
-              onClick={handleSearch} // Call search function
-              className="ml-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition"
-            >
-              Search
-            </button>
+
+            {/* Search Bar */}
+            <div className="flex gap-4">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search Medical Records by Patient Name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <Search className="absolute left-4 top-3.5 text-gray-400 h-5 w-5" />
+              </div>
+              <button
+                onClick={handleSearch}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+                Search
+              </button>
+            </div>
           </div>
+
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr className="bg-gray-50 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">Patient ID</th>
-                  <th className="py-3 px-6 text-left">Patient Name</th>
-                  <th className="py-3 px-6 text-left">Condition</th>
-                  <th className="py-3 px-6 text-left">Symptoms</th>
-                  <th className="py-3 px-6 text-left">Lab Tests Results</th>
-                  <th className="py-3 px-6 text-left">Treatments</th>
-                  <th className="py-3 px-6 text-left">Notes</th>
+            <table className="min-w-full">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Patient ID</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Patient Name</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Condition</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Symptoms</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Lab Tests Results</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Treatments</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Notes</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-600 text-sm font-light">
-                {filteredRecords.map((record) => (
-                  <tr key={record._id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{record.patientID}</td>
-                    <td className="py-3 px-6 text-left">{record.patientName}</td>
-                    <td className="py-3 px-6 text-left">{record.condition}</td>
-                    <td className="py-3 px-6 text-left">{record.symptoms}</td>
-                    <td className="py-3 px-6 text-left">{record.labTestResults}</td>
-                    <td className="py-3 px-6 text-left">{record.treatments}</td>
-                    <td className="py-3 px-6 text-left text-red-500">{record.notes}</td>
+              <tbody className="divide-y divide-gray-100">
+                {filteredRecords.length > 0 ? (
+                  filteredRecords.map((record) => (
+                    <tr key={record._id} className="hover:bg-blue-50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-gray-900">{record.patientID}</td>
+                      <td className="px-6 py-4 text-gray-600">{record.patientName}</td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                          {record.condition}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{record.symptoms}</td>
+                      <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{record.labTestResults}</td>
+                      <td className="px-6 py-4 text-gray-600 max-w-xs truncate">{record.treatments}</td>
+                      <td className="px-6 py-4 text-blue-600 max-w-xs truncate">{record.notes}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
+                      <FileText className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      No medical records found.
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AdminMedicalRecord;
+export default AdminMedicalRecord

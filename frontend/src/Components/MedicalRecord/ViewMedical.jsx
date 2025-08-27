@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import Sidebar from '../../shared/Sidebar';
 import axios from 'axios';
 import { useSelector } from 'react-redux'; // Import useSelector to access Redux state
 
@@ -49,55 +48,61 @@ const ViewMedical = () => {
   );
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 p-10 pl-20">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className='text-[40px] font-bold'>Medi<span className='text-blue-500'>Care</span></h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Page header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold mb-2">
+            Medi<span className="text-blue-200">Care</span>
+          </h1>
+          <p className="text-blue-100">Browse your medical records</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-700">Medical Records</h2>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+            <h2 className="text-2xl font-bold text-white">Medical Records</h2>
           </div>
-          <div className="flex mb-6">
-            <div className="relative flex-1">
+          <div className="p-6">
+            <div className="relative mb-6">
               <input
                 type="text"
                 placeholder="Search Medical Records"
                 value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)} // Update search term state and filter records
-                className="w-full py-2 pl-4 pr-10 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all duration-200 bg-slate-50 focus:bg-white"
               />
-              <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
+              <Search className="absolute right-4 top-3.5 text-slate-400" size={20} />
             </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr className="bg-gray-50 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">Patient ID</th>
-                  <th className="py-3 px-6 text-left">Patient Name</th>
-                  <th className="py-3 px-6 text-left">Condition</th>
-                  <th className="py-3 px-6 text-left">Symptoms</th>
-                  <th className="py-3 px-6 text-left">Lab Tests Results</th>
-                  <th className="py-3 px-6 text-left">Treatments</th>
-                  <th className="py-3 px-6 text-left">Notes</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600 text-sm font-light">
-                {userMedicalRecords.map((record) => (
-                  <tr key={record._id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{record.patientID}</td>
-                    <td className="py-3 px-6 text-left">{record.patientName}</td>
-                    <td className="py-3 px-6 text-left">{record.condition}</td>
-                    <td className="py-3 px-6 text-left">{record.symptoms}</td>
-                    <td className="py-3 px-6 text-left">{record.labTestResults}</td>
-                    <td className="py-3 px-6 text-left">{record.treatments}</td>
-                    <td className="py-3 px-6 text-left text-red-500">{record.notes}</td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <thead>
+                  <tr className="bg-slate-50 text-left text-slate-700">
+                    <th className="py-3 px-4">Patient ID</th>
+                    <th className="py-3 px-4">Patient Name</th>
+                    <th className="py-3 px-4">Condition</th>
+                    <th className="py-3 px-4">Symptoms</th>
+                    <th className="py-3 px-4">Lab Tests Results</th>
+                    <th className="py-3 px-4">Treatments</th>
+                    <th className="py-3 px-4">Notes</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="text-slate-700">
+                  {userMedicalRecords.map((record) => (
+                    <tr key={record._id} className="border-t last:border-b-0 hover:bg-slate-50/60">
+                      <td className="py-3 px-4 whitespace-nowrap">{record.patientID}</td>
+                      <td className="py-3 px-4">{record.patientName}</td>
+                      <td className="py-3 px-4">{record.condition}</td>
+                      <td className="py-3 px-4">{record.symptoms}</td>
+                      <td className="py-3 px-4">{record.labTestResults}</td>
+                      <td className="py-3 px-4">{record.treatments}</td>
+                      <td className="py-3 px-4 text-red-500">{record.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

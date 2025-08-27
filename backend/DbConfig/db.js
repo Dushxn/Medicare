@@ -1,5 +1,5 @@
-require('dotenv').config(); // Load environment variables
-const mongoose = require('mongoose');
+require("dotenv").config(); // Load environment variables
+const mongoose = require("mongoose");
 
 class Database {
   constructor() {
@@ -9,16 +9,14 @@ class Database {
   //connect to mongoDB
   _connect() {
     if (!Database.instance) {
-      mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
-      .then(() => {
-        console.log('Database connected successfully');
-      })
-      .catch(err => {
-        console.error('Database connection error:', err);
-      });
+      mongoose
+        .connect(process.env.MONGO_URI, {})
+        .then(() => {
+          console.log("Database connected successfully");
+        })
+        .catch((err) => {
+          console.error("Database connection error:", err);
+        });
 
       Database.instance = this;
     }

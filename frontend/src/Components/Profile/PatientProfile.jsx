@@ -1,23 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import Sidebar from '../../shared/Sidebar';
-import axios from 'axios';
-import { UserCircle } from 'lucide-react';
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  UserCircle,
+  Heart,
+  Phone,
+  Mail,
+  User,
+  Droplet,
+  FileText,
+  Wrench,
+} from "lucide-react";
 
 const PatientProfile = () => {
-  const dispatch = useDispatch();
-  const email = useSelector((state) => state.user.userInfo.email);
+  const email = useSelector((state) => state.user?.userInfo?.email);
   const [healthCard, setHealthCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHealthCardDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/health-cards/details/${email}`);
+        const response = await axios.get(
+          `http://localhost:5000/api/health-cards/details/${email}`
+        );
         setHealthCard(response.data.healthCard);
       } catch (err) {
-        setError('Failed to fetch health card details');
+        setError("Failed to fetch health card details");
       } finally {
         setLoading(false);
       }
@@ -29,50 +42,160 @@ const PatientProfile = () => {
   }, [email]);
 
   return (
-    <div className='flex bg-gray-100 min-h-screen ml-20 rounded-xl'>
-      <Sidebar />
-      <div className="flex-1 p-10">
-        <h1 className='text-4xl font-bold mb-8 text-gray-800 text-left ml-20'>
-          Medi<span className='text-blue-500'>Care</span>
-        </h1>
-        {loading && (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Page header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold mb-2">
+            Medi<span className="text-blue-200">Care</span>
+          </h1>
+          <p className="text-blue-100">Your health card and profile</p>
+        </div>
+      </div>
+
+      {/* Loading and error states */}
+      {loading && (
+        <div className="max-w-7xl mx-auto px-6 py-16 text-center text-slate-600">
+          <div className="inline-flex items-center gap-3">
+            <Heart className="h-5 w-5 animate-pulse text-blue-600" />
+            Loading patient information...
           </div>
-        )}
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        {healthCard && (
-          <div className="bg-white shadow-lg rounded-xl p-8 max-w-4xl mx-auto">
-            <div className="flex items-center mb-6">
-              <UserCircle className="h-20 w-20 text-blue-500 mr-4" />
-              <div>
-                <h2 className="text-3xl font-semibold text-gray-800 text-left">Patient Profile</h2>
-                <p className="text-gray-500">View and manage your health information</p>
+        </div>
+      )}
+      {error && (
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="bg-white rounded-2xl shadow-xl border border-red-200 p-6 text-center text-red-700">
+            {error}
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && healthCard && (
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left: Profile details */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                  <h2 className="text-2xl font-bold text-white mb-1">
+                    {healthCard.firstName} {healthCard.lastName}
+                  </h2>
+                  <div className="space-y-1 text-blue-100">
+                    <p>Email: {healthCard.email}</p>
+                    <p>Patient ID: {healthCard.NIC}</p>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <Field
+                      label="Full Name"
+                      icon={<User className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard.firstName} {healthCard.lastName}
+                    </Field>
+                    <Field
+                      label="Email Address"
+                      icon={<Mail className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard.email}
+                    </Field>
+                    <Field
+                      label="National ID"
+                      icon={<FileText className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard.NIC}
+                    </Field>
+                    <Field
+                      label="Gender"
+                      icon={<User className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard.gender}
+                    </Field>
+                    <Field
+                      label="Contact Number"
+                      icon={<Phone className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard.contactNo}
+                    </Field>
+                    <Field
+                      label="Blood Type"
+                      icon={<Droplet className="w-4 h-4 text-blue-600" />}
+                    >
+                      {healthCard?.bloodType || "Not specified"}
+                    </Field>
+                  </div>
+                </div>
+              </div>
+
+              {/* Health notes */}
+              <div className="bg-white rounded-2xl shadow-xl border border-slate-200 mt-8">
+                <div className="px-8 py-6 border-b border-slate-200">
+                  <h3 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" /> Health Notes
+                    & Records
+                  </h3>
+                </div>
+                <div className="p-8">
+                  <div className="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700">
+                    {healthCard.healthNotes ||
+                      "No health notes available at this time. Please consult with your healthcare provider to add relevant medical information."}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <ProfileField label="Name" value={`${healthCard.firstName} ${healthCard.lastName}`} />
-              <ProfileField label="Email" value={healthCard.email} />
-              <ProfileField label="NIC" value={healthCard.NIC} />
-              <ProfileField label="Gender" value={healthCard.gender} />
-              <ProfileField label="Contact No" value={healthCard.contactNo} />
-              <ProfileField label="Blood Type" value={healthCard.bloodType || 'Not specified'} />
-            </div>
-            <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-700 mb-2">Health Notes</h3>
-              <p className="text-gray-700">{healthCard.healthNotes || 'No health notes available.'}</p>
+
+            {/* Right: Profile photo */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+                <h3 className="text-xl font-bold text-slate-800 mb-6">
+                  Profile Photo
+                </h3>
+                {healthCard.photoUrl ? (
+                  <img
+                    src={`http://localhost:5000${healthCard.photoUrl}`}
+                    alt="Profile"
+                    className="w-full rounded-xl border border-slate-200 object-cover"
+                  />
+                ) : (
+                  <div className="w-full aspect-video bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white">
+                    <UserCircle className="h-16 w-16" />
+                  </div>
+                )}
+              </div>
+
+              {/* Tools section */}
+              <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+                <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <Wrench className="w-5 h-5 text-blue-600" /> Tools
+                </h3>
+                <p className="text-slate-600 mb-4">
+                  Explore helpful utilities to better understand your health.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate("/diabeticPrediction")}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                  Diabetes Risk Prediction
+                </button>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const ProfileField = ({ label, value }) => (
-  <div className="mb-4">
-    <h3 className="text-sm font-semibold text-gray-500 uppercase">{label}</h3>
-    <p className="text-lg text-gray-800">{value}</p>
+const Field = ({ label, icon, children }) => (
+  <div>
+    <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+      {icon}
+      {label}
+    </label>
+    <div className="mt-2 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700">
+      {children}
+    </div>
   </div>
 );
 
